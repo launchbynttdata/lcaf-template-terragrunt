@@ -1,0 +1,77 @@
+{# Template: terragrunt.hcl.j2 #}
+# Copyright 2024 NTT DATA, Inc. All Rights Reserved.
+
+# This file has been generated using the launch-cli
+locals {
+
+  # Inputs that can be shared across all the child modules
+  naming_prefix = "{{ data.config.naming_prefix}}"
+
+  # Loads the account related details like account name, id etc.
+  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+
+  # Loads the aws region information
+  region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
+
+  account_name = local.account_vars.locals.account_name
+  region       = local.region_vars.locals.aws_region
+{% if data.config.provider == 'aws' %}  {# AWS specific settings #}
+  # AWS Profile name
+  {% set accounts = data.config.accounts | replace("'", '"') %}
+  profiles = {{ accounts }}
+  profile_name = local.profiles[local.account_name]
+
+  relative_path      = path_relative_to_include()
+  environment_instance = basename(local.relative_path)
+{% if data.config.remote_state and data.config.remote_state.bucket %}
+  bucket          = "{{ data.config.remote_state.bucket}}"{% else %}
+  bucket          = "${replace(local.naming_prefix, "_", "-")}-pipeline-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
+{% endif %}{% if data.config.remote_state and data.config.remote_state.dynamodb_table %}
+  dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"{% else %}
+  dynamodb_table  = "${local.naming_prefix}-pipeline-${local.region}-${local.account_name}-${local.environment_number}-tfstate-000"{% endif %}
+}
+
+# Generate the AWS provider settings
+generate "provider" {
+
+  path      = "provider.tf"
+  if_exists = "overwrite"
+  contents  = <<EOF
+provider "aws" {
+  profile = "${local.profile_name}"
+  region  = "${local.region}"
+}
+EOF
+
+}
+
+# Generates the config file for s3 backend
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite"
+  }
+  config = {
+    profile        = "${local.profile_name}"
+    bucket         = "${replace(local.inputs.naming_prefix, "_", "-")}-pipelines-${local.region}-${local.account_name}-${local.environment_number}-tfstate-000"
+    key            = "terraform.tfstate"
+    region         = "${local.region}"
+    encrypt        = true
+    dynamodb_table = "${replace(local.inputs.naming_prefix, "_", "-")}-pipelines-${local.account_name}-${local.environment_number}-tflocks-000"
+
+    profile        = "${local.profile_name}"
+    bucket         = "${local.bucket}"
+    key            = "terraform.tfstate"
+    region         = "${local.region}"
+    encrypt        = true
+    dynamodb_table = "${local.dynamodb_table}"
+  }
+}
+
+inputs = {
+  naming_prefix = local.naming_prefix
+  environment   = local.account_name
+  profile_name  = local.profile_name
+  region        = local.region
+} {% endif %}

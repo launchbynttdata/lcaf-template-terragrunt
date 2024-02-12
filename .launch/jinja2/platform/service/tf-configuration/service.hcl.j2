@@ -1,0 +1,12 @@
+{# Template: service.hcl.j2 #}
+# Copyright 2024 NTT DATA, Inc. All Rights Reserved.
+
+# This file has been generated using the launch-cli
+terraform {
+  source = "git::{{ data.config.sources.service.module }}//.?ref=${local.git_tag}"
+}
+
+locals {
+  inputs = yamldecode(file("${get_terragrunt_dir()}/./git_tag.yaml"))
+  git_tag = local.inputs.git_tag
+}
