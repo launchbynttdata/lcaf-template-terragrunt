@@ -1,8 +1,6 @@
-{# Template: region.hcl.j2 #}
-# Copyright 2024 NTT DATA, Inc. All Rights Reserved.
-
+{#- Template: region.hcl.j2 #}
 # This file has been generated using the launch-cli
-{% set dir = data.path.split('/')[-1] %}
+{%- set dir = data.path.split('/')[-1] %}
 locals {
   region = "{{ dir }}"
 }

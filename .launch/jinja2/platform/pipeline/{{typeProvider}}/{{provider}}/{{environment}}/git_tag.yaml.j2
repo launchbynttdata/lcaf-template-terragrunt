@@ -1,6 +1,0 @@
-{# Template: git_tag.yaml.j2 #}
-# Copyright 2024 NTT DATA, Inc. All Rights Reserved.
-
-# This file has been generated using the launch-cli
-{% set ns = namespace(source_tag="") %}{% if data.config.provider == 'aws' %}{% set elements = data.path.split('/') %}{% set element_after = None %}{% for i in range(elements | length) %}{% if elements[i] == 'platform' %}{% if 'pipeline' in elements[i + 2] %}{% set ns.source_tag = data.config.sources.pipeline.tag %}{% endif %}{% if 'git' in elements[i + 2] %}{% set ns.source_tag = data.config.sources.webhook.tag %}{% endif %}{% endif %}{% endfor %}{% endif %}
-git_tag: {{ ns.source_tag }}

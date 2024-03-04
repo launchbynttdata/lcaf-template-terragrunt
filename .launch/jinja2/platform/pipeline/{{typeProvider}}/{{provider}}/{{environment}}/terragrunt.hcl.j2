@@ -1,12 +1,20 @@
-{# Template: terragrunt.hcl.j2 #}
-# Copyright 2024 NTT DATA, Inc. All Rights Reserved.
+{#- Template: terragrunt.hcl.j2 #}
 
 # This file has been generated using the launch-cli
+{%- if data.config.provider == 'aws' %}
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "common" {
-{% set elements = data.path.split('/') %}{% set element_after = None %}{% for i in range(elements | length) %}{% if elements[i] == 'platform' %}
-  path = "${get_repo_root()}/platform/{{ elements[i + 1] }}/{{ elements[i + 2] }}/tf-configuraton/service.hcl"{% endif %}{% endfor %}
+  {%- set elements = data.path.split('/') %}
+  {%- set element_after = None %}
+  {%- for i in range(elements | length) %}
+    {%- if elements[i] == 'platform' %}
+  path = "${get_repo_root()}/platform/{{ elements[i + 1] }}/{{ elements[i + 2] }}/tf-configuraton/service.hcl"
+    {%- endif %}
+  {%- endfor %}
 }
+{%- else %}
+# This file is not used for the current provider. It is safe to delete.
+{%- endif %}

@@ -24,7 +24,6 @@
             "pipeline-provider": {
                 "azdo": {
                     "dev": {
-                        "properties_file": "./az_rg.tfvars"
                     }
                 }
             }

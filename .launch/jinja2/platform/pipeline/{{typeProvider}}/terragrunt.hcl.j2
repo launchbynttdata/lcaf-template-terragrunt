@@ -1,7 +1,6 @@
-{# Template: terragrunt.hcl.j2 #}
-# Copyright 2024 NTT DATA, Inc. All Rights Reserved.
-
+{#- Template: terragrunt.hcl.j2 #}
 # This file has been generated using the launch-cli
+{%- if data.config.provider == 'aws' %}
 locals {
 
   # Inputs that can be shared across all the child modules
@@ -15,20 +14,24 @@ locals {
 
   account_name = local.account_vars.locals.account_name
   region       = local.region_vars.locals.aws_region
-{% if data.config.provider == 'aws' %}  {# AWS specific settings #}
+
   # AWS Profile name
-  {% set accounts = data.config.accounts | replace("'", '"') %}
+  {%- set accounts = data.config.accounts | replace("'", '"') %}
   profiles = {{ accounts }}
   profile_name = local.profiles[local.account_name]
 
   relative_path      = path_relative_to_include()
   environment_instance = basename(local.relative_path)
-{% if data.config.remote_state and data.config.remote_state.bucket %}
-  bucket          = "{{ data.config.remote_state.bucket}}"{% else %}
+  {%- if data.config.remote_state and data.config.remote_state.bucket %}
+  bucket          = "{{ data.config.remote_state.bucket}}"
+  {%- else %}
   bucket          = "${replace(local.naming_prefix, "_", "-")}-pipeline-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
-{% endif %}{% if data.config.remote_state and data.config.remote_state.dynamodb_table %}
-  dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"{% else %}
-  dynamodb_table  = "${local.naming_prefix}-pipeline-${local.region}-${local.account_name}-${local.environment_number}-tfstate-000"{% endif %}
+  {%- endif %}
+  {%- if data.config.remote_state and data.config.remote_state.dynamodb_table %}
+  dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"
+  {%- else %}
+  dynamodb_table  = "${local.naming_prefix}-pipeline-${local.region}-${local.account_name}-${local.environment_number}-tfstate-000"
+  {%- endif %}
 }
 
 # Generate the AWS provider settings
@@ -74,4 +77,7 @@ inputs = {
   environment   = local.account_name
   profile_name  = local.profile_name
   region        = local.region
-} {% endif %}
+}
+{%- else %}
+# This file is not used for the current provider. It is safe to delete.
+{%- endif %}

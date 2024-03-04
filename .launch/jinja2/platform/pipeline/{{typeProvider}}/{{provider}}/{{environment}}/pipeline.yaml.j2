@@ -1,0 +1,30 @@
+{#- Template: pipeline.yaml.j2 #}
+# This file has been generated using the launch-cli
+{%- if data.config.provider == 'az' %}
+
+trigger:
+  branches:
+    include:
+    - feature/init
+
+variables:
+- template: variables.yaml
+
+# Found behavior were resources cannot have vars
+resources:
+  repositories:
+  - repository: 'launchPlatform'
+    type: 'github'
+    name: 'nexient-llc/lcaf-component-provider_az-pipeline_azdo'
+    ref: 'refs/heads/feature/1456'
+    endpoint: 'aaron-launch'
+
+stages:
+- template: iac/stages/release.yaml@launchPlatform
+  parameters:
+    vmImageNameMSFTHosted: $(vmImageNameMSFTHosted)
+    serviceConnection: $(serviceConnection)
+    targetEnvironment: $(targetEnvironment)
+{%- else %}
+# This file is not used for the current provider. It is safe to delete.
+{%- endif %}

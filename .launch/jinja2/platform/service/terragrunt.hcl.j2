@@ -1,6 +1,4 @@
-{# Template: terragrunt.hcl.j2 #}
-# Copyright 2024 NTT DATA, Inc. All Rights Reserved.
-
+{#- Template: terragrunt.hcl.j2 #}
 # This file has been generated using the launch-cli
 locals {
   # Inputs that can be shared across all the child modules
@@ -15,24 +13,30 @@ locals {
   account_name = local.account_vars.locals.account_name
   region       = local.region_vars.locals.region
 
-{% if data.config.provider == 'az' %}   {# Azure specific settings #}
+{#- Azure specific settings #}
+{%- if data.config.provider == 'az' %}
   # Subscription id for the account
-  {% set accounts = data.config.accounts | replace("'", '"') %}
+  {%- set accounts = data.config.accounts | replace("'", '"') %}
   subscriptions = {{ accounts }}
   subscription_id = local.subscriptions[local.account_name]
 
   relative_path      = path_relative_to_include()
   environment_instance = basename(local.relative_path)
-{% if data.config.remote_state and data.config.remote_state.resource_group_name %}
-  backend_rg_name              = "{{ data.config.remote_state.resource_group_name}}"{% else %}
+  {%- if data.config.remote_state and data.config.remote_state.resource_group_name %}
+  backend_rg_name              = "{{ data.config.remote_state.resource_group_name}}"
+  {%- else %}
   backend_rg_name              = "${local.naming_prefix}-rg-${local.region}-${local.account_name}-${local.environment_instance}-tfstate"
-{% endif %}{% if data.config.remote_state and data.config.remote_state.storage_account_name %}
-  backend_storage_account_name = "{{ data.config.remote_state.storage_account_name}}"{% else %}
+  {%- endif %}
+  {%- if data.config.remote_state and data.config.remote_state.storage_account_name %}
+  backend_storage_account_name = "{{ data.config.remote_state.storage_account_name}}"
+  {%- else %}
   backend_storage_account_name = "${local.naming_prefix}sa${local.region}${local.account_name}${local.environment_instance}tf" # 24 chars limit
-{% endif %}{% if data.config.remote_state and data.config.remote_state.container_name %}
-  backend_container_name       = "{{ data.config.remote_state.container_name}}"{% else %}
-  backend_container_name       = "tfstate"{% endif %}
-
+  {%- endif %}
+  {%- if data.config.remote_state and data.config.remote_state.container_name %}
+  backend_container_name       = "{{ data.config.remote_state.container_name}}"
+  {%- else %}
+  backend_container_name       = "tfstate"
+  {%- endif %}
 }
 
 # Generate Azure providers
@@ -69,25 +73,31 @@ remote_state {
     storage_account_name = local.backend_storage_account_name
     container_name       = local.backend_container_name
   }
-}{% endif %}{% if data.config.provider == 'aws' %}  {# AWS specific settings #}
+}
+{%- endif %}
+{#- AWS specific settings #}
+{%- if data.config.provider == 'aws' %}
   # AWS Profile name
-  {% set accounts = data.config.accounts | replace("'", '"') %}
+  {%- set accounts = data.config.accounts | replace("'", '"') %}
   profiles = {{ accounts }}
   profile_name = local.profiles[local.account_name]
 
   relative_path      = path_relative_to_include()
   environment_instance = basename(local.relative_path)
-{% if data.config.remote_state and data.config.remote_state.bucket %}
-  bucket          = "{{ data.config.remote_state.bucket}}"{% else %}
+  {%- if data.config.remote_state and data.config.remote_state.bucket %}
+  bucket          = "{{ data.config.remote_state.bucket}}"
+  {%- else %}
   bucket          = "${local.naming_prefix}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate"
-{% endif %}{% if data.config.remote_state and data.config.remote_state.dynamodb_table %}
-  dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"{% else %}
-  dynamodb_table  = "${local.naming_prefix}-${local.region}-${local.account_name}-${local.environment_instance}-tflocks"{% endif %}
+  {%- endif %}
+  {%- if data.config.remote_state and data.config.remote_state.dynamodb_table %}
+  dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"
+  {%- else %}
+  dynamodb_table  = "${local.naming_prefix}-${local.region}-${local.account_name}-${local.environment_instance}-tflocks"
+  {%- endif %}
 }
 
 # Generate the AWS provider settings
 generate "provider" {
-
   path      = "provider.tf"
   if_exists = "overwrite"
   contents  = <<EOF
@@ -102,7 +112,6 @@ provider "aws" {
   region  = "us-east-1"
 }
 EOF
-
 }
 
 # Generates the config file for s3 backend
@@ -127,4 +136,5 @@ inputs = {
   environment   = local.account_name
   profile_name  = local.profile_name
   region        = local.region
-}{% endif %}
+}
+{%- endif %}
