@@ -1,0 +1,14 @@
+{#- Template: variables.yaml.j2 #}
+# This file has been generated using the launch-cli
+{%- set ns = namespace(source_tag="") %}
+{%- set elements = data.path.split('/') %}
+{%- for i in range(elements | length) %}
+{%-     if elements[i] == 'platform' %}
+{%-         if 'pipeline' in elements[i + 2] %}
+{%-             set ns.source_tag = data.config.sources.pipeline.tag %}
+{%-         elif 'git' in elements[i + 2] %}
+{%-             set ns.source_tag = data.config.sources.webhook.tag %}
+{%-         endif %}
+{%-     endif %}
+{%- endfor %}
+git_tag: {{ ns.source_tag }}

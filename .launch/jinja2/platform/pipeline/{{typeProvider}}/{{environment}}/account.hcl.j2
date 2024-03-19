@@ -1,0 +1,6 @@
+{#- Template: account.hcl.j2 #}
+# This file has been generated using the launch-cli
+{%- set dir = data.path.split('/')[-1] %}
+locals {
+  account_name = "{{ dir }}"
+}

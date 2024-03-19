@@ -1,0 +1,24 @@
+{#- Template: terragrunt.hcl.j2 #}
+# This file has been generated using the launch-cli
+include "root" {
+  path = find_in_parent_folders()
+}
+
+include "common" {
+{%- set elements = data.path.split('/') %}
+{%- for i in range(elements | length) %}
+{%-   if elements[i] == 'platform' %}
+  path = "${get_repo_root()}/platform/{{ elements[i + 1] }}/{{ elements[i + 2] }}/tf-configuration/service.hcl"
+{%-   endif %}
+{%- endfor %}
+}
+
+locals {
+{%- set elements = data.path.split('/') %}
+{%- for i in range(elements | length) %}
+{%-   if elements[i] == 'platform' %}
+  environment = "{{ elements[i + 1] }}"
+  service = "{{ elements[i + 2] }}"
+{%-   endif %}
+{%- endfor %}
+}

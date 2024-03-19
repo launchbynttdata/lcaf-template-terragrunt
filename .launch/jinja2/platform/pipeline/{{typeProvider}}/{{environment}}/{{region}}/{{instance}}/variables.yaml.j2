@@ -1,0 +1,12 @@
+{#- Template: variables.yaml.j2 #}
+# This file has been generated using the launch-cli
+{%- if data.config.provider == 'az' %}
+{%- set targetEnvironment = data.path.split('/')[-1] %}
+
+variables:
+  vmImageNameMSFTHosted: ubuntu-latest
+  serviceConnection: sandbox-nexientcloud-sn
+  targetEnvironment: {{ targetEnvironment}}
+{%- else %}
+# This file is not used for the current provider. It is safe to delete.
+{%- endif %}

@@ -3,16 +3,20 @@
         "service":{
             "module": "https://github.com/nexient-llc/tf-azurerm-module-resource_group.git",
             "tag" : "0.2.0"
+        },
+        "pipeline":{
+            "module": "https://github.com/nexient-llc/tf-azureado-module_ref-pipeline.git",
+            "tag" : "0.1.0"
         }
     },
     "provider": "az",
     "accounts": {
-        "dev": "e71eb3cd-83f2-46eb-8f47-3b779e27672f"
+        "sandbox": "e71eb3cd-83f2-46eb-8f47-3b779e27672f"
     },
     "naming_prefix": "demo",
     "platform": {
         "service": {
-            "dev": {
+            "sandbox": {
                 "eastus": {
                     "000": {
                         "properties_file": "./az_rg.tfvars"
@@ -23,7 +27,10 @@
         "pipeline": {
             "pipeline-provider": {
                 "azdo": {
-                    "dev": {
+                    "sandbox": {
+                        "000": {
+                            "properties_file": "./ado_pipeline.tfvars"
+                        }
                     }
                 }
             }

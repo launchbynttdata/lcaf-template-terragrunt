@@ -6,10 +6,9 @@ include "root" {
 
 include "common" {
 {%- set elements = data.path.split('/') %}
-{%- set element_after = None %}
 {%- for i in range(elements | length) %}
-  {%- if elements[i] == 'platform' %}
+{%-   if elements[i] == 'platform' %}
   path = "${get_repo_root()}/platform/{{ elements[i + 1] }}/tf-configuration/service.hcl"
-  {%- endif %}
+{%-   endif %}
 {%- endfor %}
 }

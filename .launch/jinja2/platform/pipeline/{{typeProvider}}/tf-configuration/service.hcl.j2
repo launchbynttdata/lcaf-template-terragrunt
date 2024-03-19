@@ -1,29 +1,22 @@
 {#- Template: service.hcl.j2 #}
 # This file has been generated using the launch-cli
-{%- if data.config.provider == 'aws' %}
-  {%- set ns = namespace(source_module="") %}
-  {%- if data.config.provider == 'aws' %}
-    {%- set elements = data.path.split('/') %}
-    {%- set element_after = None %}
-    {%- for i in range(elements | length) %}
-    {%- if elements[i] == 'platform' %}
-      {%- if 'pipeline' in elements[i + 2] %}
-        {%- set ns.source_module = data.config.sources.pipeline.module %}
-      {%- endif %}
-      {%- if 'git' in elements[i + 2] %}
-        {%- set ns.source_module = data.config.sources.webhook.module %}
-      {%- endif %}
-      {%- endif %}
-    {%- endfor %}
-  {%- endif %}
+{%- set ns = namespace(source_module="") %}
+{%- set elements = data.path.split('/') %}
+{%- set element_after = None %}
+{%- for i in range(elements | length) %}
+{%-   if elements[i] == 'platform' %}
+{%-     if 'pipeline' in elements[i + 2] %}
+{%-       set ns.source_module = data.config.sources.pipeline.module %}
+{%-     elif 'git' in elements[i + 2] %}
+{%-       set ns.source_module = data.config.sources.webhook.module %}
+{%-     endif %}
+{%-   endif %}
+{%- endfor %}
 terraform {
   source = "git::{{ ns.source_module }}//.?ref=${local.git_tag}"
 }
 
 locals {
-  inputs = yamldecode(file("${get_terragrunt_dir()}/./variables.yaml"))
+  inputs = yamldecode(file("${get_terragrunt_dir()}/./git_tag.yaml"))
   git_tag = local.inputs.git_tag
 }
-{%- else %}
-# This file is not used for the current provider. It is safe to delete.
-{%- endif %}
