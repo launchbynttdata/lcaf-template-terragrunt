@@ -6,7 +6,7 @@
 {%-     if elements[i] == 'platform' %}
 {%-         if 'pipeline' in elements[i + 2] %}
 {%-             set ns.source_tag = data.config.sources.pipeline.tag %}
-{%-         elif 'git' in elements[i + 2] %}
+{%-         elif 'webhook' in elements[i + 2] %}
 {%-             set ns.source_tag = data.config.sources.webhook.tag %}
 {%-         endif %}
 {%-     endif %}

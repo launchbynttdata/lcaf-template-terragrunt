@@ -23,23 +23,27 @@
             "sandbox": {
                 "us-east-2": {
                     "000": {
-                        "properties_file": "./aws_s3.tfvars"
+                        "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.launch/example_projects/aws/aws_s3.tfvars"
                     }
                 }
             }
         },
         "pipeline": {
             "pipeline-provider": {
-                "aws": {
-                    "sandbox": {
-                        "properties_file": "./aws_s3.tfvars"
+                "root": {
+                    "us-east-2": {
+                        "000": {
+                            "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.launch/example_projects/aws/aws_s3.tfvars"
+                        }
                     }
                 }
             },
-            "git-provider": {
-                "aws": {
-                    "webhook": {
-                        "properties_file": "./aws_s3.tfvars"
+            "webhook-provider": {
+                "root": {
+                    "us-east-2": {
+                        "000": {
+                            "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.launch/example_projects/aws/aws_s3.tfvars"
+                        }
                     }
                 }
             }
