@@ -1,29 +1,33 @@
 {
-    "sources":{
-        "service":{
-            "module": "https://github.com/nexient-llc/tf-aws-wrapper_module-s3_bucket.git",
-            "tag" : "0.1.1"
-        },
-        "pipeline":{
-            "module": "https://github.com/nexient-llc/tf-aws-wrapper_module-codepipelines.git",
-            "tag" : "0.1.1"
-        },
-        "webhook":{
-            "module": "https://github.com/nexient-llc/tf-aws-wrapper_module-bulk_lambda_function.git",
-            "tag" : "0.1.0"
-        }
-    },
     "provider": "aws",
     "accounts": {
         "sandbox": "launch-sandbox-admin"
     },
     "naming_prefix": "demo",
+    "skeleton": {
+        "url": "https://github.com/launchbynttdata/lcaf-template-terragrunt.git",
+        "tag": "patch/template-refactor"
+    },
+    "sources": {
+        "service": {
+            "repo": "https://github.com/launchbynttdata/tf-aws-wrapper_module-s3_bucket.git",
+            "tag": "0.1.1"
+        },
+        "pipeline": {
+            "repo": "https://github.com/launchbynttdata/tf-aws-wrapper_module-codepipelines.git",
+            "tag": "0.1.1"
+        },
+        "webhook": {
+            "repo": "https://github.com/launchbynttdata/tf-aws-wrapper_module-bulk_lambda_function.git",
+            "tag": "0.1.0"
+        }
+    },
     "platform": {
         "service": {
             "sandbox": {
                 "us-east-2": {
                     "000": {
-                        "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.launch/example_projects/aws/aws_s3.tfvars"
+                        "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.examples/aws/aws_s3.tfvars"
                     }
                 }
             }
@@ -33,7 +37,7 @@
                 "root": {
                     "us-east-2": {
                         "000": {
-                            "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.launch/example_projects/aws/aws_s3.tfvars"
+                            "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.examples/aws/aws_s3.tfvars"
                         }
                     }
                 }
@@ -42,7 +46,7 @@
                 "root": {
                     "us-east-2": {
                         "000": {
-                            "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.launch/example_projects/aws/aws_s3.tfvars"
+                            "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.examples/aws/aws_s3.tfvars"
                         }
                     }
                 }
