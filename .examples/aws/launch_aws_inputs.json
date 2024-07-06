@@ -27,7 +27,7 @@
             "sandbox": {
                 "us-east-2": {
                     "000": {
-                        "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.examples/aws/aws_s3.tfvars"
+                        "properties_file": "/workspaces/workplace/lcaf-template-terragrunt/.examples/aws/aws_s3.tfvars",
                     }
                 }
             }
