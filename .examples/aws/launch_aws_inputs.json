@@ -10,15 +10,15 @@
     },
     "sources": {
         "service": {
-            "repo": "https://github.com/launchbynttdata/tf-aws-wrapper_module-s3_bucket.git",
+            "url": "https://github.com/launchbynttdata/tf-aws-wrapper_module-s3_bucket.git",
             "tag": "0.1.1"
         },
         "pipeline": {
-            "repo": "https://github.com/launchbynttdata/tf-aws-wrapper_module-codepipelines.git",
+            "url": "https://github.com/launchbynttdata/tf-aws-wrapper_module-codepipelines.git",
             "tag": "0.1.1"
         },
         "webhook": {
-            "repo": "https://github.com/launchbynttdata/tf-aws-wrapper_module-bulk_lambda_function.git",
+            "url": "https://github.com/launchbynttdata/tf-aws-wrapper_module-bulk_lambda_function.git",
             "tag": "0.1.0"
         }
     },
