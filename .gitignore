@@ -1,5 +1,6 @@
 terraform.*
-!terraform.tfvars
+!/platform/**/*.tfvars
+
 .repo/
 components/
 .semverbot.toml
@@ -7,23 +8,23 @@ components/
 .golangci.yaml
 
 .idea
+!examples/*.tfvars
+
+# We don't want to commit the test run lock files
+.terraform.lock.hcl
+
+# Don't include the .test-data directory created by Terratest's test-structure module
+**/.test-data/*
 
 # Local .terraform directories
 **/.terraform/*
 
-# terraform lock file
-.terraform.lock.hcl
-
 # Local .terragrunt directories
 **/.terragrunt/*
-**/.terragrunt-cache/*
 
 # .tfstate files
 *.tfstate
 *.tfstate.*
-
-# tfvars
-*.auto.tfvars
 
 # Crash log files
 crash.log
@@ -34,13 +35,15 @@ crash.*.log
 # control as they are data points which are potentially sensitive and subject
 # to change depending on the environment.
 *.tfvars.json
+*.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
-*override.tf
-*override.tf.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 provider.tf
-backend.tf
 
 # Include override files you do wish to add to version control using negated pattern
 # !example_override.tf
@@ -57,10 +60,11 @@ azure_env.sh
 .releaserc.json
 .tflint.hcl
 
-# Ignore any zip files from lambda
-*.zip
-
+# Pre-commit hook
 .pre-commit-config.yaml
 
-# Ignore inputs.yaml files from the envs
-env/**/inputs.yaml
+# VS Code
+.vscode/
+
+# Don't include launch-cli local build files
+.launch/

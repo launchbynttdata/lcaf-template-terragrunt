@@ -1,7 +1,7 @@
 {#- Template: service.hcl.j2 #}
 # This file has been generated using the launch-cli
 terraform {
-  source = "git::{{ data.config.sources.service.module }}//.?ref=${local.git_tag}"
+  source = "git::{{ data.config.sources.service.url }}//.?ref=${local.git_tag}"
 }
 
 locals {

@@ -1,6 +1,6 @@
 {#- Template: pipeline.yaml.j2 #}
-# This file has been generated using the launch-cli
 {%- if data.config.provider == 'az' %}
+# This file has been generated using the launch-cli
 
 trigger:
   branches:
@@ -25,6 +25,4 @@ stages:
     vmImageNameMSFTHosted: $(vmImageNameMSFTHosted)
     serviceConnection: $(serviceConnection)
     targetEnvironment: $(targetEnvironment)
-{%- else %}
-# This file is not used for the current provider. It is safe to delete.
 {%- endif %}

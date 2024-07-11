@@ -6,9 +6,9 @@
 {%- for i in range(elements | length) %}
 {%-   if elements[i] == 'platform' %}
 {%-     if 'pipeline' in elements[i + 2] %}
-{%-       set ns.source_module = data.config.sources.pipeline.module %}
+{%-       set ns.source_module = data.config.sources.pipeline.url %}
 {%-     elif 'git' in elements[i + 2] %}
-{%-       set ns.source_module = data.config.sources.webhook.module %}
+{%-       set ns.source_module = data.config.sources.webhook.url %}
 {%-     endif %}
 {%-   endif %}
 {%- endfor %}

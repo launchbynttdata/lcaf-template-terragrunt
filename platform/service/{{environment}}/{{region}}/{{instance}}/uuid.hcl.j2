@@ -1,9 +1,7 @@
 {#- Template: az_storage.hcl.j2 #}
-# This file has been generated using the launch-cli
 {%- if data.config.provider == 'az' %}
+# This file has been generated using the launch-cli
 locals {
   uuid = "{{ data.config.dir_dict.uuid }}"
 }
-{%- else %}
-# This file is not used for the current provider. It is safe to delete.
 {%- endif %}
