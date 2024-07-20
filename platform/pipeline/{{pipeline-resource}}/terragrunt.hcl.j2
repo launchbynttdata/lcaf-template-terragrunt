@@ -24,7 +24,7 @@ locals {
 {%-   set stripped_name_prefix = stripped_name_prefix_list | join('') %}
   # Subscription id for the account
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
-  subscriptions = {{ accounts }}
+  subscriptions = {{ accounts | safe }}
   subscription_id = local.subscriptions[local.account_name]
 
   uuid = read_terragrunt_config("${get_terragrunt_dir()}/uuid.hcl").locals.uuid
@@ -86,7 +86,7 @@ remote_state {
 {%- elif data.config.provider == 'aws' %}
   # AWS Profile name
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
-  profiles = {{ accounts }}
+  profiles = {{ accounts | safe }}
   profile_name = local.profiles[local.account_name]
 
   relative_path      = path_relative_to_include()
