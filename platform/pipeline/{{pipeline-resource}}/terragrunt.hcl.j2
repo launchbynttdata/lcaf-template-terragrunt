@@ -126,13 +126,6 @@ remote_state {
   }
   config = {
     profile        = "${local.profile_name}"
-    bucket         = "${replace(local.inputs.naming_prefix, "_", "-")}-pipelines-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
-    key            = "terraform.tfstate"
-    region         = "${local.region}"
-    encrypt        = true
-    dynamodb_table = "${replace(local.inputs.naming_prefix, "_", "-")}-pipelines-${local.account_name}-${local.environment_instance}-tflocks-000"
-
-    profile        = "${local.profile_name}"
     bucket         = "${local.bucket}"
     key            = "terraform.tfstate"
     region         = "${local.region}"
