@@ -1,0 +1,12 @@
+{#- Template: buildspec.yml.j2 #}
+{%- if data.config.provider == 'aws' %}
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - eval "${LAUNCH_ACTION}"
+  post_build:
+    commands:
+      - codebuild-status
+{%- endif %}

@@ -24,7 +24,7 @@ locals {
 {%-   set stripped_name_prefix = stripped_name_prefix_list | join('') %}
   # Subscription id for the account
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
-  subscriptions = {{ accounts }}
+  subscriptions = {{ accounts | safe }}
   subscription_id = local.subscriptions[local.account_name]
 
   uuid = read_terragrunt_config("${get_terragrunt_dir()}/uuid.hcl").locals.uuid
@@ -86,20 +86,22 @@ remote_state {
 {%- elif data.config.provider == 'aws' %}
   # AWS Profile name
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
-  profiles = {{ accounts }}
+  profiles = {{ accounts | safe }}
   profile_name = local.profiles[local.account_name]
 
   relative_path      = path_relative_to_include()
   environment_instance = basename(local.relative_path)
+{%- set elements = data.path.split('/') %}
+{%- set resource = elements[-1] | replace("-provider", "") %}
 {%-   if data.config.remote_state and data.config.remote_state.bucket %}
   bucket          = "{{ data.config.remote_state.bucket}}"
 {%-   else %}
-  bucket          = "${replace(local.naming_prefix, "_", "-")}-pipeline-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
+  bucket          = "${replace(local.naming_prefix, "_", "-")}-{{ resource }}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
 {%-   endif %}
 {%-   if data.config.remote_state and data.config.remote_state.dynamodb_table %}
   dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"
 {%-   else %}
-  dynamodb_table  = "${local.naming_prefix}-pipeline-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
+  dynamodb_table  = "${local.naming_prefix}-{{ resource }}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
 {%-   endif %}
 }
 
@@ -125,13 +127,6 @@ remote_state {
     if_exists = "overwrite"
   }
   config = {
-    profile        = "${local.profile_name}"
-    bucket         = "${replace(local.inputs.naming_prefix, "_", "-")}-pipelines-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
-    key            = "terraform.tfstate"
-    region         = "${local.region}"
-    encrypt        = true
-    dynamodb_table = "${replace(local.inputs.naming_prefix, "_", "-")}-pipelines-${local.account_name}-${local.environment_instance}-tflocks-000"
-
     profile        = "${local.profile_name}"
     bucket         = "${local.bucket}"
     key            = "terraform.tfstate"
