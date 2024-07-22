@@ -96,12 +96,12 @@ remote_state {
 {%-   if data.config.remote_state and data.config.remote_state.bucket %}
   bucket          = "{{ data.config.remote_state.bucket}}"
 {%-   else %}
-  bucket          = "${replace(local.naming_prefix, "_", "-")}-${local.resource}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
+  bucket          = "${replace(local.naming_prefix, "_", "-")}-{{ resource }}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
 {%-   endif %}
 {%-   if data.config.remote_state and data.config.remote_state.dynamodb_table %}
   dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"
 {%-   else %}
-  dynamodb_table  = "${local.naming_prefix}-${local.resource}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
+  dynamodb_table  = "${local.naming_prefix}-{{ resource }}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
 {%-   endif %}
 }
 
