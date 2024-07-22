@@ -91,15 +91,17 @@ remote_state {
 
   relative_path      = path_relative_to_include()
   environment_instance = basename(local.relative_path)
+{%- set elements = data.path.split('/') %}
+{%- set resource = elements[-1] | replace("-provider", "") %}
 {%-   if data.config.remote_state and data.config.remote_state.bucket %}
   bucket          = "{{ data.config.remote_state.bucket}}"
 {%-   else %}
-  bucket          = "${replace(local.naming_prefix, "_", "-")}-pipeline-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
+  bucket          = "${replace(local.naming_prefix, "_", "-")}-${local.resource}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
 {%-   endif %}
 {%-   if data.config.remote_state and data.config.remote_state.dynamodb_table %}
   dynamodb_table  = "{{ data.config.remote_state.dynamodb_table}}"
 {%-   else %}
-  dynamodb_table  = "${local.naming_prefix}-pipeline-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
+  dynamodb_table  = "${local.naming_prefix}-${local.resource}-${local.region}-${local.account_name}-${local.environment_instance}-tfstate-000"
 {%-   endif %}
 }
 
