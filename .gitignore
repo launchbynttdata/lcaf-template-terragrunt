@@ -68,3 +68,5 @@ azure_env.sh
 
 # Don't include launch-cli local build files
 .launch/
+
+*.zip
