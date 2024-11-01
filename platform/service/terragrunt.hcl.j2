@@ -13,7 +13,7 @@ locals {
   account_name = local.account_vars.locals.account_name
   region       = local.region_vars.locals.region
 {#- Azure specific settings #}
-{%- if data.config.provider == 'az' %}
+{%- if data.config.provider.service == 'az' %}
 {%-   set stripped_name_prefix_list = [] %}
 {%-   for char in data.config.naming_prefix %}
 {%-     if char.isalnum() %}
@@ -82,7 +82,7 @@ remote_state {
   }
 }
 {#- AWS specific settings #}
-{%- elif data.config.provider == 'aws' %}
+{%- elif data.config.provider.service == 'aws' %}
   # AWS Profile name
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
   profiles = {{ accounts | safe }}

@@ -1,4 +1,17 @@
 {#- Template: terragrunt.hcl.j2 #}
+{%- set elements = data.path.split('/') %}
+{%- set resource = "none" %}
+{%- set provider = "none" %}
+{%- for i in range(elements | length) %}
+{%-   if elements[i] == 'platform' %}
+    {%- set resource = elements[i + 2] | replace("-provider", "") %}
+{%-   endif %}
+{%- endfor %}
+{%- if data.config.provider[resource] is defined %}
+{%-   set provider = data.config.provider[resource] %}
+{%- else %}
+{%-   set provider =  data.config.provider.service %}
+{%- endif %}
 # This file has been generated using the launch-cli
 locals {
 
@@ -14,7 +27,7 @@ locals {
   account_name = local.account_vars.locals.account_name
   region       = local.region_vars.locals.region
 {#- Azure specific settings #}
-{%- if data.config.provider == 'az' %}
+{%- if provider == 'az' or provider == 'ado' %}
 {%-   set stripped_name_prefix_list = [] %}
 {%-   for char in data.config.naming_prefix %}
 {%-     if char.isalnum() %}
@@ -47,7 +60,7 @@ locals {
 {%-   endif %}
 }
 
-# Generate Azure providers
+{%-   if provider == 'az' %}
 generate "versions" {
   path      = "versions_override.tf"
   if_exists = "overwrite_terragrunt"
@@ -68,6 +81,15 @@ generate "versions" {
     }
 EOF
 }
+{%-   elif provider == 'ado' %}
+generate "provider" {
+  path      = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<-EOF
+    provider "azuredevops" {}
+  EOF
+}
+{%-   endif %}
 
 remote_state {
   backend = "azurerm"
@@ -83,7 +105,7 @@ remote_state {
   }
 }
 {#- AWS specific settings #}
-{%- elif data.config.provider == 'aws' %}
+{%- elif data.config.provider[resource] == 'aws' %}
   # AWS Profile name
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
   profiles = {{ accounts | safe }}
@@ -91,8 +113,6 @@ remote_state {
 
   relative_path      = path_relative_to_include()
   environment_instance = basename(local.relative_path)
-{%- set elements = data.path.split('/') %}
-{%- set resource = elements[-1] | replace("-provider", "") %}
 {%-   if data.config.remote_state and data.config.remote_state.bucket %}
   bucket          = "{{ data.config.remote_state.bucket}}"
 {%-   else %}
