@@ -4,13 +4,16 @@
 {%- set provider = "none" %}
 {%- for i in range(elements | length) %}
 {%-   if elements[i] == 'platform' %}
-    {%- set resource = elements[i + 2] | replace("-provider", "") %}
+{%-     set resource = elements[i + 2] | replace("-provider", "") %}
+# resource: {{ resource }}
 {%-   endif %}
 {%- endfor %}
 {%- if data.config.provider[resource] is defined %}
 {%-   set provider = data.config.provider[resource] %}
+# provider(resource): {{ provider }}
 {%- else %}
 {%-   set provider =  data.config.provider.service %}
+# provider(service): {{ provider }}
 {%- endif %}
 # This file has been generated using the launch-cli
 locals {
