@@ -8,8 +8,8 @@
 # resource: {{ resource }}
 {%-   endif %}
 {%- endfor %}
-{%- if getattr(data.config.provider, resource) is defined %}
-{%-   set provider = getattr(data.config.provider, resource) %}
+{%- if attribute(data.config.provider, resource) is defined %}
+{%-   set provider = attribute(data.config.provider, resource) %}
 # provider(resource): {{ provider }}
 {%- else %}
 {%-   set provider =  data.config.provider.service %}
