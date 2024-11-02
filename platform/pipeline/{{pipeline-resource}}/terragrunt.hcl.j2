@@ -11,7 +11,7 @@
 {%- if data.config.provider.get(resource)  is defined %}
 {%-   if data.config.provider.get(resource) == "pipeline" %}
 {%-     set provider = data.config.provider.pipeline %}
-{%-   elsif data.config.provider.get(resource) == "webhook" %}
+{%-   elif data.config.provider.get(resource) == "webhook" %}
 {%-     set provider = data.config.provider.webhook %}
 {%-   endif %}
 # provider(resource): {{ provider }}
