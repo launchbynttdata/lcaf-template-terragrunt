@@ -10,9 +10,9 @@
 {%-   endif %}
 {%- endfor %}
 {%- if data.config.provider.get(resource) is defined %}
-{%-   if data.config.provider.get(resource) == 'pipeline' %}
+{%-   if resource == 'pipeline' %}
 {%-     set provider = data.config.provider.pipeline %}
-{%-   elif data.config.provider.get(resource) == 'webhook' %}
+{%-   elif resource == 'webhook' %}
 {%-     set provider = data.config.provider.webhook %}
 {%-   endif %}
 # provider(resource): {{ provider }}
