@@ -5,10 +5,11 @@
 {%- for i in range(elements | length) %}
 {%-   if elements[i] == 'platform' %}
 {%-     set resource = elements[i + 2] | replace("-provider", "") %}
+# {{ data.config.provider }}
 # resource: {{ resource }}
 {%-   endif %}
 {%- endfor %}
-{%- if data.config.provider.get(resource)  is defined %}
+{%- if data.config.provider.get(resource) is defined %}
 {%-   if data.config.provider.get(resource) == 'pipeline' %}
 {%-     set provider = data.config.provider.pipeline %}
 {%-   elif data.config.provider.get(resource) == 'webhook' %}
