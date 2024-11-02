@@ -8,7 +8,7 @@
 # resource: {{ resource }}
 {%-   endif %}
 {%- endfor %}
-{%- if (data.config.provider)[resource] is defined %}
+{%- if data.config.provider.get(resource)  is defined %}
 {%-   set provider = data.config.provider[resource] %}
 # provider(resource): {{ provider }}
 {%- else %}
