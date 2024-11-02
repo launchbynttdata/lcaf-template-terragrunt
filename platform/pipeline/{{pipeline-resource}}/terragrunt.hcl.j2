@@ -4,21 +4,12 @@
 {%- for i in range(elements | length) %}
 {%-   if elements[i] == 'platform' %}
 {%-     set ns.resource = elements[i + 2] | replace("-provider", "") %}
-# {{ data.config.provider }}
-# resource: {{ ns.resource }}
 {%-   endif %}
 {%- endfor %}
 {%- if data.config.provider.get(ns.resource) is defined %}
-# get: {{ data.config.provider.get(ns.resource) }}
-{%-   if ns.resource == 'pipeline' %}
-{%-     set ns.provider = data.config.provider.pipeline %}
-{%-   elif ns.resource == 'webhook' %}
-{%-     set ns.provider = data.config.provider.webhook %}
-{%-   endif %}
-# provider(resource): {{ ns.provider }}
+{%-   set ns.provider = data.config.provider.get(ns.resource) %}
 {%- else %}
 {%-   set ns.provider =  data.config.provider.service %}
-# provider(service): {{ ns.provider }}
 {%- endif %}
 # This file has been generated using the launch-cli
 locals {
