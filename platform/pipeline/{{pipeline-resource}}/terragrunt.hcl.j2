@@ -1,7 +1,7 @@
 {#- Template: terragrunt.hcl.j2 #}
 {%- set elements = data.path.split('/') %}
-{%- set resource = "none" %}
-{%- set provider = "none" %}
+{%- set resource = "1234" %}
+{%- set provider = "1234" %}
 {%- for i in range(elements | length) %}
 {%-   if elements[i] == 'platform' %}
 {%-     set resource = elements[i + 2] | replace("-provider", "") %}
