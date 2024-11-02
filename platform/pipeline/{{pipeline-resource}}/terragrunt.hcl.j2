@@ -1,25 +1,24 @@
 {#- Template: terragrunt.hcl.j2 #}
 {%- set elements = data.path.split('/') %}
-{%- set resource = "1234" %}
-{%- set provider = "1234" %}
+{%- set ns = namespace(resource="none", provider="none") %}
 {%- for i in range(elements | length) %}
 {%-   if elements[i] == 'platform' %}
-{%-     set resource = elements[i + 2] | replace("-provider", "") %}
+{%-     set ns.resource = elements[i + 2] | replace("-provider", "") %}
 # {{ data.config.provider }}
-# resource: {{ resource }}
+# resource: {{ ns.resource }}
 {%-   endif %}
 {%- endfor %}
-{%- if data.config.provider.get(resource) is defined %}
-# get: {{ data.config.provider.get(resource) }}
-{%-   if resource == 'pipeline' %}
-{%-     set provider = data.config.provider.pipeline %}
-{%-   elif resource == 'webhook' %}
-{%-     set provider = data.config.provider.webhook %}
+{%- if data.config.provider.get(ns.resource) is defined %}
+# get: {{ data.config.provider.get(ns.resource) }}
+{%-   if ns.resource == 'pipeline' %}
+{%-     set ns.provider = data.config.provider.pipeline %}
+{%-   elif ns.resource == 'webhook' %}
+{%-     set ns.provider = data.config.provider.webhook %}
 {%-   endif %}
-# provider(resource): {{ provider }}
+# provider(resource): {{ ns.provider }}
 {%- else %}
-{%-   set provider =  data.config.provider.service %}
-# provider(service): {{ provider }}
+{%-   set ns.provider =  data.config.provider.service %}
+# provider(service): {{ ns.provider }}
 {%- endif %}
 # This file has been generated using the launch-cli
 locals {
@@ -36,7 +35,7 @@ locals {
   account_name = local.account_vars.locals.account_name
   region       = local.region_vars.locals.region
 {#- Azure specific settings #}
-{%- if provider == 'az' or provider == 'ado' %}
+{%- if ns.provider == 'az' or ns.provider == 'ado' %}
 {%-   set stripped_name_prefix_list = [] %}
 {%-   for char in data.config.naming_prefix %}
 {%-     if char.isalnum() %}
@@ -69,7 +68,7 @@ locals {
 {%-   endif %}
 }
 
-{%-   if provider == 'az' %}
+{%-   if ns.provider == 'az' %}
 generate "versions" {
   path      = "versions_override.tf"
   if_exists = "overwrite_terragrunt"
@@ -90,7 +89,7 @@ generate "versions" {
     }
 EOF
 }
-{%-   elif provider == 'ado' %}
+{%-   elif ns.provider == 'ado' %}
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite_terragrunt"
@@ -114,7 +113,7 @@ remote_state {
   }
 }
 {#- AWS specific settings #}
-{%- elif data.config.provider[resource] == 'aws' %}
+{%- elif ns.provider == 'aws' %}
   # AWS Profile name
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
   profiles = {{ accounts | safe }}
