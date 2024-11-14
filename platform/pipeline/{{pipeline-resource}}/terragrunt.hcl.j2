@@ -60,20 +60,10 @@ locals {
 }
 
 {%-   if ns.provider == 'az' %}
-generate "versions" {
-  path      = "versions_override.tf"
-  if_exists = "overwrite_terragrunt"
+generate "provider" {
+  path      = "provider.tf"
+  if_exists = "overwrite"
   contents  = <<EOF
-    terraform {
-      required_version = "<= 1.5.5"
-      required_providers {
-        azurerm = {
-          source = "hashicorp/azurerm"
-          version = ">=3.77.0"
-        }
-      }
-    }
-
     provider "azurerm" {
         features {}
         subscription_id = "${local.subscription_id}"
@@ -83,7 +73,7 @@ EOF
 {%-   elif ns.provider == 'ado' %}
 generate "provider" {
   path      = "provider.tf"
-  if_exists = "overwrite_terragrunt"
+  if_exists = "overwrite"
   contents  = <<-EOF
     provider "azuredevops" {}
   EOF
@@ -94,7 +84,7 @@ remote_state {
   backend = "azurerm"
   generate = {
     path      = "backend.tf"
-    if_exists = "overwrite_terragrunt"
+    if_exists = "overwrite"
   }
   config = {
     key                  = "${path_relative_to_include()}/terraform.tfstate"
@@ -126,7 +116,6 @@ remote_state {
 
 # Generate the AWS provider settings
 generate "provider" {
-
   path      = "provider.tf"
   if_exists = "overwrite"
   contents  = <<EOF
@@ -135,7 +124,6 @@ provider "aws" {
   region  = "${local.region}"
 }
 EOF
-
 }
 
 # Generates the config file for s3 backend
