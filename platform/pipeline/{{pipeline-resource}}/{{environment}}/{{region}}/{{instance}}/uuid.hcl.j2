@@ -1,5 +1,17 @@
 {#- Template: az_storage.hcl.j2 #}
-{%- if data.config.provider == 'az' %}
+{%- set elements = data.path.split('/') %}
+{%- set ns = namespace(resource="none", provider="none") %}
+{%- for i in range(elements | length) %}
+{%-   if elements[i] == 'platform' %}
+{%-     set ns.resource = elements[i + 2] | replace("-provider", "") %}
+{%-   endif %}
+{%- endfor %}
+{%- if data.config.provider.get(ns.resource) is defined %}
+{%-   set ns.provider = data.config.provider.get(ns.resource) %}
+{%- else %}
+{%-   set ns.provider =  data.config.provider.service %}
+{%- endif %}
+{%- if ns.provider == 'az' or ns.provider == 'ado' %}
 # This file has been generated using the launch-cli
 locals {
   uuid = "{{ data.config.dir_dict.uuid }}"

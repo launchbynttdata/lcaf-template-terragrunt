@@ -1,4 +1,16 @@
 {#- Template: terragrunt.hcl.j2 #}
+{%- set elements = data.path.split('/') %}
+{%- set ns = namespace(resource="none", provider="none") %}
+{%- for i in range(elements | length) %}
+{%-   if elements[i] == 'platform' %}
+{%-     set ns.resource = elements[i + 2] | replace("-provider", "") %}
+{%-   endif %}
+{%- endfor %}
+{%- if data.config.provider.get(ns.resource) is defined %}
+{%-   set ns.provider = data.config.provider.get(ns.resource) %}
+{%- else %}
+{%-   set ns.provider =  data.config.provider.service %}
+{%- endif %}
 # This file has been generated using the launch-cli
 locals {
 
@@ -14,7 +26,7 @@ locals {
   account_name = local.account_vars.locals.account_name
   region       = local.region_vars.locals.region
 {#- Azure specific settings #}
-{%- if data.config.provider == 'az' %}
+{%- if ns.provider == 'az' or ns.provider == 'ado' %}
 {%-   set stripped_name_prefix_list = [] %}
 {%-   for char in data.config.naming_prefix %}
 {%-     if char.isalnum() %}
@@ -47,33 +59,32 @@ locals {
 {%-   endif %}
 }
 
-# Generate Azure providers
-generate "versions" {
-  path      = "versions_override.tf"
-  if_exists = "overwrite_terragrunt"
+{%-   if ns.provider == 'az' %}
+generate "provider" {
+  path      = "provider.tf"
+  if_exists = "overwrite"
   contents  = <<EOF
-    terraform {
-      required_version = "<= 1.5.5"
-      required_providers {
-        azurerm = {
-          source = "hashicorp/azurerm"
-          version = ">=3.77.0"
-        }
-      }
-    }
-
     provider "azurerm" {
         features {}
         subscription_id = "${local.subscription_id}"
     }
 EOF
 }
+{%-   elif ns.provider == 'ado' %}
+generate "provider" {
+  path      = "provider.tf"
+  if_exists = "overwrite"
+  contents  = <<-EOF
+    provider "azuredevops" {}
+  EOF
+}
+{%-   endif %}
 
 remote_state {
   backend = "azurerm"
   generate = {
     path      = "backend.tf"
-    if_exists = "overwrite_terragrunt"
+    if_exists = "overwrite"
   }
   config = {
     key                  = "${path_relative_to_include()}/terraform.tfstate"
@@ -83,7 +94,7 @@ remote_state {
   }
 }
 {#- AWS specific settings #}
-{%- elif data.config.provider == 'aws' %}
+{%- elif ns.provider == 'aws' %}
   # AWS Profile name
 {%-   set accounts = data.config.accounts | replace("'", '"') %}
   profiles = {{ accounts | safe }}
@@ -91,8 +102,6 @@ remote_state {
 
   relative_path      = path_relative_to_include()
   environment_instance = basename(local.relative_path)
-{%- set elements = data.path.split('/') %}
-{%- set resource = elements[-1] | replace("-provider", "") %}
 {%-   if data.config.remote_state and data.config.remote_state.bucket %}
   bucket          = "{{ data.config.remote_state.bucket}}"
 {%-   else %}
@@ -107,7 +116,6 @@ remote_state {
 
 # Generate the AWS provider settings
 generate "provider" {
-
   path      = "provider.tf"
   if_exists = "overwrite"
   contents  = <<EOF
@@ -116,7 +124,6 @@ provider "aws" {
   region  = "${local.region}"
 }
 EOF
-
 }
 
 # Generates the config file for s3 backend

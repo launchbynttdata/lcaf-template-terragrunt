@@ -1,5 +1,5 @@
 {#- Template: az_storage.hcl.j2 #}
-{%- if data.config.provider == 'az' %}
+{%- if data.config.provider.service == 'az' %}
 # This file has been generated using the launch-cli
 locals {
   uuid = "{{ data.config.dir_dict.uuid }}"
