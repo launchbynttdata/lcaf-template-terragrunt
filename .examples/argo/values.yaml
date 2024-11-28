@@ -1,0 +1,28 @@
+app_name: argo-cd
+argo_namespace: argocd
+project_name: default
+target_revision: v5.46.2
+chart_name: argo-cd
+value_files:
+  - values.yaml
+helm_parameters:
+  - name: server.extraArgs
+    value: "--insecure"
+  - name: server.service.type
+    value: "LoadBalancer"
+k8s_server: https://kubernetes.default.svc
+namespace: argocd
+
+new_app:
+  name: argo-cd
+  repo_url: https://github.com/example-org/my-helm-charts.git
+  revision: v5.46.2
+  chart_path: charts/my-helm-chart
+  namespace: my-app-namespace
+  value_files:
+    - values.yaml
+  parameters:
+    - name: replicaCount
+      value: "3"
+    - name: service.type
+      value: "ClusterIP"

@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+    # Name of the application
+    name: {{ app_name }}
+    # Namespace where the application will be deployed
+    namespace: {{ argo_namespace }}
+
+spec:
+    # Project name associated with the application
+    project: {{ project_name }}
+
+    source:
+        # URL of the repository containing the application's source code
+        repoURL: {{ repo_url | default("http://argoproj.github.io/argo-helm") }}
+        # Target revision (commit, branch, or tag) of the repository to deploy
+        targetRevision: {{ target_revision | default("HEAD") }}
+        # Name of the Helm chart to deploy
+        chart:  {{ chart_name | default("argo-cd") }}
+        helm:
+            valueFiles:
+                {% for value_file in value_files %}
+                # Path to additional value files for the Helm chart
+                - {{ value_file }}
+                {% endfor %}
+            parameters:
+                {% for param in helm_parameters %}
+                # Parameters to be passed to the Helm chart
+                - name: {{ key }}
+                  value: {{ value }}
+                {% endfor %}
+    
+    destination:
+        # Kubernetes server to deploy the application to
+        server: {{ k8s_server }}
+        # Namespace in the Kubernetes cluster where the application will be deployed
+        namespace: {{ namespace }}
+
+    syncPolicy:
+        automated:
+            # Enable pruning of resources not defined in the application
+            prune: true
+            # Enable self-healing of resources in the application
+            selfHeal: true
+        syncOptions:
+            # Additional sync options for the application deployment
+            - CreateNamespace=true
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: {{ new_app.name }}
+    namespace: {{ argo_namespace }}
+spec:
+    project: {{ project_name }}
+    source:
+        repoURL: {{ new_app.repo_url }}
+        targetRevision: {{ new_app.revision }}
+        path: {{ new_app.chart_path }}
+        helm:
+            valueFiles:
+               {{% for value_file in new_app.value_file %}}
+            parameters:
+                {{% for param in new_app.helm_parameters %}}
+                - name: {{ param.name }}
+                  value: {{ param.value }}
+                {{% endfor %}}
+    destination:
+        server: {{ k8s_server }}
+        namespace: {{ new_app.namespace }}
+    syncPolicy:
+        automated:
+            prune: true
+            selfHeal: true
+        syncOptions:
+            - CreateNamespace=true
