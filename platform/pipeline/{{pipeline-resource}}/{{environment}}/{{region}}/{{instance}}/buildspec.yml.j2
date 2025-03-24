@@ -14,7 +14,11 @@ phases:
   post_build:
     commands:
       - |
+        echo 
         . ${CODEBUILD_SRC_DIR}/set_vars.sh
+        echo "CODEBUILD_BUILD_SUCCEEDING=${CODEBUILD_BUILD_SUCCEEDING}"
+        echo "IS_PIPELINE_LAST_STAGE=${IS_PIPELINE_LAST_STAGE}"
+
         GITHUB_TOKEN=$(launch github auth application --application-id-parameter-name "${GITHUB_APPLICATION_ID}" --installation-id-parameter-name "${GITHUB_INSTALLATION_ID}" --signing-cert-secret-name "${GITHUB_SIGNING_CERT_SECRET_NAME}") 
         if (( CODEBUILD_BUILD_SUCCEEDING == 0 )); then
           launch github commit status set --status "failure" --description "Build failed." --repository-name "${GIT_REPO}" --organization "${GIT_ORG}" --commit-hash "${MERGE_COMMIT_ID}" --target-url "${CODEBUILD_BUILD_URL}" --context "${LAUNCH_CONTEXT}"
