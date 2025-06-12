@@ -11,7 +11,11 @@
 {%- else %}
 {%-   set ns.provider =  data.config.provider.service %}
 {%- endif %}
-# This file has been generated using the launch-cli {{resource}} resource
+# This file has been generated using the launch-cli
+# locals:
+# {{ locals() }}
+# globals:
+# {{ globals() }}
 locals {
 
   # Inputs that can be shared across all the child modules
