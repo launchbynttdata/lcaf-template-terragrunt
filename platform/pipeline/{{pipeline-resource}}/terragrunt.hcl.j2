@@ -12,8 +12,10 @@
 {%-   set ns.provider =  data.config.provider.service %}
 {%- endif %}
 # This file has been generated using the launch-cli
-# globals:
-# {{ globals() }}
+# resource: {{resource}}
+# provider: {{provider}}
+# data: {{data}}
+
 locals {
 
   # Inputs that can be shared across all the child modules
